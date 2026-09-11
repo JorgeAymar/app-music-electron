@@ -60,16 +60,26 @@ function renderResults(videos) {
   for (const video of videos) {
     const card = document.createElement('div');
     card.className = 'result-card';
-    card.innerHTML = `
-      <img src="${video.thumbnail}" alt="${video.title}" loading="lazy" />
-      <div class="result-info">
-        <div class="result-title">${video.title}</div>
-        <div class="result-meta">
-          <span>${video.author}</span>
-          <span>${video.duration}</span>
-        </div>
-      </div>
-    `;
+
+    const img = document.createElement('img');
+    img.src = video.thumbnail;
+    img.alt = video.title;
+    img.loading = 'lazy';
+
+    const info = document.createElement('div');
+    info.className = 'result-info';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'result-title';
+    titleEl.textContent = video.title;
+    const metaEl = document.createElement('div');
+    metaEl.className = 'result-meta';
+    const authorEl = document.createElement('span');
+    authorEl.textContent = video.author;
+    const durationEl = document.createElement('span');
+    durationEl.textContent = video.duration;
+    metaEl.append(authorEl, durationEl);
+    info.append(titleEl, metaEl);
+    card.append(img, info);
 
     const favBtn = document.createElement('button');
     favBtn.className = 'favorite-btn' + (isFavorite(video.id) ? ' active' : '');
@@ -104,7 +114,10 @@ async function doSearch(query) {
     lastSearchResults = videos;
     renderResults(videos);
   } catch (err) {
-    resultsEl.innerHTML = `<p class="empty-state">Error al buscar: ${err.message}</p>`;
+    const p = document.createElement('p');
+    p.className = 'empty-state';
+    p.textContent = `Error al buscar: ${err.message}`;
+    resultsEl.replaceChildren(p);
   }
 }
 
